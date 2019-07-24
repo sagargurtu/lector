@@ -38,7 +38,7 @@
         }
 
         /**
-         * Computes stepTabs based on window size
+         * @desc Computes stepTabs based on window size
          */
         _computeStepTabs() {
             this.stepTabs = Math.floor(window.innerWidth / 100)
