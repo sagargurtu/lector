@@ -10,8 +10,16 @@
   <a href="https://github.com/sagargurtu/lector/releases"><img alt="Release" src="https://img.shields.io/github/release/sagargurtu/lector.svg"/></a>
   <a href="https://github.com/sagargurtu/lector/blob/master/LICENSE"><img alt="License" src="https://img.shields.io/github/license/sagargurtu/lector.svg"/></a>
   <a href="https://github.com/sagargurtu/lector/issues"><img alt="Issues" src="https://img.shields.io/github/issues/sagargurtu/lector.svg"/></a>
-  <a href=""><img alt="Code Size" src="https://img.shields.io/github/languages/code-size/sagargurtu/lector.svg"/></a>
-  <a href=""><img alt="Downloads" src="https://img.shields.io/github/downloads/sagargurtu/lector/total.svg"/></a>
+  <a href="https://github.com/sagargurtu/lector"><img alt="Code Size" src="https://img.shields.io/github/languages/code-size/sagargurtu/lector.svg"/></a>
+  <a href="https://github.com/sagargurtu/lector"><img alt="Downloads" src="https://img.shields.io/github/downloads/sagargurtu/lector/total.svg"/></a>
+</p>
+
+<p align="center">
+  <img alt="Tabbed View" src="https://github.com/sagargurtu/lector/blob/master/docs/assets/screenshots/Tabbed%20View.png" width=800/>
+</p>
+
+<p align="center">
+  <img alt="Empty View" src="https://github.com/sagargurtu/lector/blob/master/docs/assets/screenshots/Empty%20View.png" width=800/>
 </p>
 
 #### Dependencies
