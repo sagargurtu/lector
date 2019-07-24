@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i,600,600i,700,700i&display=swap');
+
+html {
+    font-family: "Segoe UI", "San Francisco", "Source Sans Pro", sans-serif;
+}
+
+body {
+    background: #1e1e1e;
+}
+
+#tabContainer {
+    position: absolute;
+    background: #252525;
+    top: 0;
+    left: 25px;
+    right: 25px;
+    height: 35px;
+    display: flex;
+    flex-direction: row;
+    visibility: hidden;
+}
+
+#leftSeek, #rightSeek {
+    position: absolute;
+    background: #252525;
+    top: 0;
+    width: 25px;
+    height: 23px;
+    text-align: center;
+    font-size: 12px;
+    vertical-align: middle;
+    padding: 6px 0px;
+    font-weight: bolder;
+    visibility: hidden;
+    user-select: none;
+}
+
+#leftSeek {
+    left: 0;
+}
+
+#rightSeek {
+    right: 0;
+}
+
+.active-seek {
+    color: #cccccc;
+    cursor: pointer;
+}
+
+.inactive-seek {
+    color: #666666;
+    cursor: default;
+}
+
+#viewContainer {
+    position: absolute;
+    width: 100%;
+    top: 35px;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+#backgroundInfo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    margin: auto;
+    display: block;
+    font-size: 16px;
+    font-weight: lighter;
+    text-align: center;
+    color: #cccccc;
+}
+
+#backgroundLogo {
+    position: relative;
+    height: 150px;
+    width: 150px;
+    margin: auto;
+}
+
+iframe {
+    position: absolute;
+    border: none;
+    width: 100%;
+    height: 100%;
+}
+
+.active {
+    background: #1e1e1e;
+    border: none;
+    color: #ffffff;
+}
+
+.inactive {
+    background: #2d2d2d;
+    border-left: 0.5px solid #252525;
+    border-right: 0.5px solid #252525;
+    color: #cccccc;
+}
+
+.file-tab-label {
+    position: relative;
+    display: inline-block;
+    font-size: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: calc(100% - 15px);
+}
+
+.file-tab-close {
+    position: relative;
+    display: inline-block;
+    top: 40%;
+    transform: translateY(-50%);
+    margin-left: 5px;
+    width: 10px;
+    color: #ffffff;
+}
+
+.file-tab {
+    float: left;
+    height: 35px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer;
+    user-select: none;
+}

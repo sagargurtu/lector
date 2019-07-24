@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i,600,600i,700,700i&display=swap');
+
+html {
+    font-family: "Segoe UI", "San Francisco", "Source Sans Pro", sans-serif;
+}
+
+body {
+    background: #222222;
+    user-select: none;
+}
+
+#container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    width: 300px;
+    height: 200px;
+}
+
+#logo {
+    float: left;
+    width: 100px;
+    height: 100px;
+}
+
+#productLabel {
+    float: left;
+    margin-left: 30px;
+    font-size: 48px;
+    color: #ffffff;
+    letter-spacing: 0.75px;
+}
+
+#desc {
+    float: left;
+    margin-left: 30px;
+    color: #ffffff;
+    font-weight: lighter;
+}
+
+#win {
+    position: absolute;
+    display: block;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 150px;
+    width: 180px;
+    color: #ffffff;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: lighter;
+    border-bottom: 1px solid #dddddd;
+    padding-bottom: 8px;
+}

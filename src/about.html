@@ -1,0 +1,35 @@
+<!--
+    Copyright (c) 2019 Sagar Gurtu
+    Licensed under the MIT License. See License in the project root for license information.
+-->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lector - About</title>
+    <link rel="stylesheet" href="css/about.css">
+</head>
+
+<body>
+    <div id='titlebar'></div>
+    <img id='logo' src='assets/images/logo.png' />
+    <div id='info'>
+        <div id='label'>Lector</div>
+        <div id='description'>A simple PDF reader</div>
+        <div id='stats'>
+            <div>Version: 1.0.0</div>
+            <div>Author: Sagar Gurtu</div>
+        </div>
+    </div>
+    <div id='close'>&times;</div>
+    <script>
+        const remote = require('electron').remote
+        document.getElementById('close').addEventListener('click', event => {
+            let window = remote.getCurrentWindow()
+            window.close()
+        })
+    </script>
+</body>
+
+</html>
