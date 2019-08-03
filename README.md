@@ -30,6 +30,15 @@
 #### Libraries Used
 * [PDF.js](https://mozilla.github.io/pdf.js/)
 
+## What's new?
+
+#### v1.0.0
+* First release.
+* Tabbed View to easily switch between multiple documents.
+* Document Navigation Tools.
+* Thumbnail and Outline Panes.
+* Find, Go to, Zoom and Print.
+
 ## Getting started
 
 ### Installation
