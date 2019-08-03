@@ -61,4 +61,5 @@ npm run dist
 ```
 
 ## License
-[MIT](https://github.com/sagargurtu/lector/blob/master/LICENSE)
+[PDF.js](https://mozilla.github.io/pdf.js/) is under [Apache License 2.0](https://github.com/mozilla/pdf.js/blob/master/LICENSE) \
+This project is under [MIT](https://github.com/sagargurtu/lector/blob/master/LICENSE) License
