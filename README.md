@@ -32,6 +32,10 @@
 
 ## What's new?
 
+#### v1.1.0
+* Added PDF file association.
+* New PDF file icons.
+
 #### v1.0.0
 * First release.
 * Tabbed View to easily switch between multiple documents.
@@ -70,5 +74,6 @@ npm run dist
 ```
 
 ## License
-[PDF.js](https://mozilla.github.io/pdf.js/) is under [Apache License 2.0](https://github.com/mozilla/pdf.js/blob/master/LICENSE) \
+[PDF.js](https://mozilla.github.io/pdf.js/) is under [Apache License 2.0](https://github.com/mozilla/pdf.js/blob/master/LICENSE)
+
 This project is under [MIT](https://github.com/sagargurtu/lector/blob/master/LICENSE) License
