@@ -33,7 +33,7 @@
 ## What's new?
 
 #### v1.1.0
-* Added PDF file association.
+* PDF file association.
 * New PDF file icons.
 
 #### v1.0.0
