@@ -1,6 +1,6 @@
 {
     "name": "lector",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "productName": "Lector",
     "description": "A simple PDF Reader",
     "main": "src/js/main.js",
@@ -28,7 +28,7 @@
         "appId": "lector",
         "productName": "Lector",
         "copyright": "Copyright (c) 2019 Sagar Gurtu",
-        "buildVersion": "1.0.0",
+        "buildVersion": "1.1.0",
         "win": {
             "target": "NSIS",
             "icon": "./src/assets/icons/win/icon.ico",
