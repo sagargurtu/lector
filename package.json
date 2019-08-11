@@ -12,6 +12,10 @@
     },
     "author": "Sagar Gurtu",
     "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/sagargurtu/lector.git"
+    },
     "dependencies": {
         "custom-electron-titlebar": "^3.0.9"
     },
@@ -27,7 +31,11 @@
         "buildVersion": "1.0.0",
         "win": {
             "target": "NSIS",
-            "icon": "./src/assets/icons/win/icon.ico"
+            "icon": "./src/assets/icons/win/icon.ico",
+            "fileAssociations": {
+                "ext": "pdf",
+                "icon": "./src/assets/icons/win/file.ico"
+            }
         },
         "nsis": {
             "artifactName": "${productName}Setup.${ext}",

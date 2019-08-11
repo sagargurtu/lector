@@ -1,47 +1,50 @@
 "use strict";
-/*-------------------------------------------------------------------------------------------
+/*------------------------------------------------------------------------------
  *  Copyright (c) 2019 Sagar Gurtu
- *  Licensed under the MIT License. See License in the project root for license information.
- *------------------------------------------------------------------------------------------*/
+ *  Licensed under the MIT License.
+ *  See License in the project root for license information.
+ *----------------------------------------------------------------------------*/
 
 (function () {
 
-    const { ipcRenderer } = require('electron')
-    const customTitlebar = require('custom-electron-titlebar')
+    const { ipcRenderer, remote } = require('electron');
+    const customTitlebar = require('custom-electron-titlebar');
 
     /**
-     * @desc Main view class containing all rendering and event listening operations 
+     * @desc Main view class containing all rendering and
+     *       event listening operations
      */
     class Reader {
 
         constructor() {
             // Array of all path names
-            this.files = []
+            this._paths = [];
             // Array of all tab elements
-            this.tabs = []
+            this._tabs = [];
             // Total number of buckets
-            this.buckets = 1
+            this._buckets = 1;
             // Current tab element
-            this.currentTab = null
+            this._currentTab = null;
             // Current bucket index
-            this.currentBucket = 0
+            this._currentBucket = 0;
             // Number of tabs in one bucket
-            this._computeStepTabs()
+            this._computeStepTabs();
 
             // Title bar object
-            this.titleBar = this._getTitleBar()
+            this._titleBar = this._getTitleBar();
 
-            this.tabContainer = document.getElementById('tabContainer')
-            this.viewerElement = document.getElementById('viewer')
-            this.leftSeekElement = document.getElementById('leftSeek')
-            this.rightSeekElement = document.getElementById('rightSeek')
+            this._tabContainer = document.getElementById('tabContainer');
+            this._viewerElement = document.getElementById('viewer');
+            this._leftSeekElement = document.getElementById('leftSeek');
+            this._rightSeekElement =
+                document.getElementById('rightSeek');
         }
 
         /**
          * @desc Computes stepTabs based on window size
          */
         _computeStepTabs() {
-            this.stepTabs = Math.floor(window.innerWidth / 100)
+            this.stepTabs = Math.floor(window.innerWidth / 100);
         }
 
         /**
@@ -51,43 +54,44 @@
             return new customTitlebar.Titlebar({
                 backgroundColor: customTitlebar.Color.fromHex('#333'),
                 icon: 'assets/images/logo.png'
-            })
+            });
         }
 
         /**
          * @desc Appends tabs at bucketPosition to tabContainer
-         * @param {*} bucketPosition 
+         * @param {*} bucketPosition
          */
         _appendTabsToContainer(bucketPosition) {
-            this.tabContainer.innerHTML = ""
+            this._tabContainer.innerHTML = "";
             for (let i = bucketPosition * this.stepTabs;
-                i < this.tabs.length && i < (bucketPosition + 1) * this.stepTabs;
+                i < this._tabs.length &&
+                i < (bucketPosition + 1) * this.stepTabs;
                 i++) {
-                this.tabContainer.append(this.tabs[i])
+                this._tabContainer.append(this._tabs[i]);
             }
         }
 
         /**
-         * @desc Toggles seek elements based on number of buckets and current bucket
+         * @desc Toggles seek elements based on number of buckets
+         *       and current bucket
          */
         _toggleSeek() {
-            this.leftSeekElement.classList = []
-            this.rightSeekElement.classList = []
-            if (this.buckets > 1) {
-                if (this.currentBucket === 0) {
-                    this.leftSeekElement.classList.add('inactive-seek')
-                    this.rightSeekElement.classList.add('active-seek')
-                } else if (this.currentBucket === this.buckets - 1) {
-                    this.leftSeekElement.classList.add('active-seek')
-                    this.rightSeekElement.classList.add('inactive-seek')
+            this._leftSeekElement.classList = [];
+            this._rightSeekElement.classList = [];
+            if (this._buckets > 1) {
+                if (this._currentBucket === 0) {
+                    this._leftSeekElement.classList.add('inactive-seek');
+                    this._rightSeekElement.classList.add('active-seek');
+                } else if (this._currentBucket === this._buckets - 1) {
+                    this._leftSeekElement.classList.add('active-seek');
+                    this._rightSeekElement.classList.add('inactive-seek');
                 } else {
-                    this.leftSeekElement.classList.add('active-seek')
-                    this.rightSeekElement.classList.add('active-seek')
+                    this._leftSeekElement.classList.add('active-seek');
+                    this._rightSeekElement.classList.add('active-seek');
                 }
-            }
-            else {
-                this.leftSeekElement.classList.add('inactive-seek')
-                this.rightSeekElement.classList.add('inactive-seek')
+            } else {
+                this._leftSeekElement.classList.add('inactive-seek');
+                this._rightSeekElement.classList.add('inactive-seek');
             }
         }
 
@@ -95,239 +99,258 @@
          * @desc Recalculates number of buckets
          */
         _updateBuckets() {
-            this.buckets = Math.ceil(this.tabs.length / this.stepTabs)
+            this._buckets = Math.ceil(this._tabs.length / this.stepTabs);
         }
 
         /**
          * @desc Re-renders tabs in tabContainer
          */
         _adjustTabs() {
-            this._updateBuckets()
+            this._updateBuckets();
 
-            let currentPosition = this.tabs.indexOf(this.currentTab)
-            let newBucketPosition = Math.floor(currentPosition / this.stepTabs)
+            let currentPosition = this._tabs.indexOf(this._currentTab);
+            let newBucketPosition =
+                Math.floor(currentPosition / this.stepTabs);
 
-            if (newBucketPosition !== this.currentBucket || 
-                this.tabContainer.childElementCount !== this.stepTabs) {
-                this._appendTabsToContainer(newBucketPosition)
-                this.currentBucket = newBucketPosition
+            if (newBucketPosition !== this._currentBucket ||
+                this._tabContainer.childElementCount !== this.stepTabs) {
+                this._appendTabsToContainer(newBucketPosition);
+                this._currentBucket = newBucketPosition;
             }
 
-            this._toggleSeek()
+            this._toggleSeek();
         }
 
         /**
          * @desc Toggles background info visibility based on flag
-         * @param {*} flag 
+         * @param {*} flag
          */
         _toggleBackgroundInfo(flag) {
-            let visibility = flag ? 'visible' : 'hidden'
-            document.getElementById('backgroundInfo').style.visibility = visibility
+            let visibility = flag ? 'visible' : 'hidden';
+            document.getElementById('backgroundInfo').style.visibility =
+                visibility;
         }
 
         /**
          * @desc Creates a new tab element
-         * @param {*} pathname 
+         * @param {*} pathName
          */
-        _createTabElement(pathname) {
-            const filename = pathname.substring(pathname.lastIndexOf('\\') + 1)
-            const tabElement = document.createElement('div')
-            const labelElement = document.createElement('div')
-            const closeElement = document.createElement('div')
-            let that = this
+        _createTabElement(pathName) {
+            const filename = pathName.substring(pathName.lastIndexOf('\\') + 1);
+            const tabElement = document.createElement('div');
+            const labelElement = document.createElement('div');
+            const closeElement = document.createElement('div');
+            let that = this;
 
-            labelElement.innerHTML = filename
-            labelElement.setAttribute('class', 'file-tab-label')
+            labelElement.innerHTML = filename;
+            labelElement.setAttribute('class',
+                'file-tab-label');
 
-            closeElement.innerHTML = '&times;'
-            closeElement.style.visibility = 'hidden'
-            closeElement.setAttribute('class', 'file-tab-close')
+            closeElement.innerHTML = '&times;';
+            closeElement.style.visibility = 'hidden';
+            closeElement.setAttribute('class',
+                'file-tab-close');
 
-            tabElement.classList.add('file-tab')
-            tabElement.classList.add('inactive')
-            tabElement.setAttribute('data-path', pathname)
+            tabElement.classList.add('file-tab');
+            tabElement.classList.add('inactive');
+            tabElement.setAttribute('data-path', pathName);
 
-            tabElement.append(labelElement)
-            tabElement.append(closeElement)
+            tabElement.append(labelElement);
+            tabElement.append(closeElement);
 
             closeElement.addEventListener('click', event => {
-                let positionToRemove = that.tabs.indexOf(tabElement)
-                if (that.tabs.length === 1) {
+                let positionToRemove = that._tabs.indexOf(tabElement);
+                if (that._tabs.length === 1) {
                     // If only one tab remaining, empty everything
-                    that.currentTab = null
-                    that.tabContainer.innerHTML = ""
-                    that.viewerElement.removeAttribute('src')
-                    that._toggleMenuItems(false)
-                    that._toggleBackgroundInfo(true)
-                } else if (tabElement === that.currentTab) {
+                    that._currentTab = null;
+                    that._tabContainer.innerHTML = "";
+                    that._viewerElement.removeAttribute('src');
+                    that._toggleMenuItems(false);
+                    that._toggleBackgroundInfo(true);
+                } else if (tabElement === that._currentTab) {
                     // If current tab is to be removed
-                    let newCurrentPosition = positionToRemove
-                    // If tab to be removed is first in array, make next tab as current
+                    let newCurrentPosition = positionToRemove;
+                    // If tab to be removed is first in array,
+                    // make next tab as current
                     if (positionToRemove === 0) {
-                        newCurrentPosition = 1
+                        newCurrentPosition = 1;
                     } else { // Else, make previous tab as current
-                        newCurrentPosition -= 1
+                        newCurrentPosition -= 1;
                     }
                     // Switch to new current tab
-                    that._switchTab(that.tabs[newCurrentPosition])
+                    that._switchTab(that._tabs[newCurrentPosition]);
                 }
-                // Remove tab from files and tabs and update buckets
-                that.files.splice(positionToRemove, 1)
-                that.tabs.splice(positionToRemove, 1)
-                that._updateBuckets()
+                // Remove tab from paths and tabs and update buckets
+                that._paths.splice(positionToRemove, 1);
+                that._tabs.splice(positionToRemove, 1);
+                that._updateBuckets();
 
                 // If atleast one tab remaining
-                if (that.tabs.length > 0) {
+                if (that._tabs.length > 0) {
                     // If this bucket has no tabs, render current bucket
-                    if (that.tabContainer.childElementCount === 1) {
-                        that._adjustTabs()
-                    } else { // Else, re-render this bucket without switching to current bucket
-                        that._appendTabsToContainer(that.currentBucket)
+                    if (that._tabContainer.childElementCount === 1) {
+                        that._adjustTabs();
+                    } else {
+                        // Else, re-render this bucket without switching to
+                        // current bucket
+                        that._appendTabsToContainer(that._currentBucket);
                     }
                 } else { // If no tabs remaining
-                    that._toggleTabContainer(false)
-                    that._updateTitle()
+                    that._toggleTabContainer(false);
+                    that._updateTitle();
                 }
-                that._toggleSeek()
-                event.stopPropagation()
+                that._toggleSeek();
+                event.stopPropagation();
 
-            })
+            });
 
             tabElement.addEventListener('mouseover', event => {
-                if (tabElement !== that.currentTab)
-                    closeElement.style.visibility = 'visible'
-            })
+                if (tabElement !== that._currentTab) {
+                    closeElement.style.visibility = 'visible';
+                }
+            });
 
             tabElement.addEventListener('mouseleave', event => {
-                if (tabElement !== that.currentTab)
-                    closeElement.style.visibility = 'hidden'
-            })
+                if (tabElement !== that._currentTab) {
+                    closeElement.style.visibility = 'hidden';
+                }
+            });
 
             tabElement.addEventListener('click', event => {
-                if (tabElement !== that.currentTab)
-                    that._switchTab(tabElement)
-            })
+                if (tabElement !== that._currentTab) {
+                    that._switchTab(tabElement);
+                }
+            });
 
-            return tabElement
+            return tabElement;
         }
 
         /**
          * @desc Dispatches click event to window
          */
         _propagateClick() {
-            window.dispatchEvent(new Event('mousedown'))
+            window.dispatchEvent(new Event('mousedown'));
         }
 
         /**
          * @desc Propagates iframe events to window
          */
         _setViewerEvents() {
-            this.viewerElement.contentDocument.addEventListener('click', this._propagateClick)
-            this.viewerElement.contentDocument.addEventListener('mousedown', this._propagateClick)
+            this._viewerElement.contentDocument.addEventListener('click',
+                this._propagateClick);
+            this._viewerElement.contentDocument.addEventListener('mousedown',
+                this._propagateClick);
         }
 
         /**
-         * @desc Opens pathname in iframe
-         * @param {*} pathname 
+         * @desc Opens pathName in iframe
+         * @param {*} pathName
          */
-        _openInViewer(pathname) {
-            this.viewerElement.src = 'lib/pdfjs/web/viewer.html?file=' + encodeURIComponent(pathname)
-            this.viewerElement.onload = this._setViewerEvents.bind(this)
+        _openInViewer(pathName) {
+            this._viewerElement.src = 'lib/pdfjs/web/viewer.html?file=' +
+                encodeURIComponent(pathName);
+            this._viewerElement.onload = this._setViewerEvents.bind(this);
         }
 
         /**
          * @desc Focuses the current tab and opens current file in iframe
          */
         _focusCurrentTab() {
-            this.tabs.forEach(tabElement => {
-                tabElement.classList.remove('active')
-                tabElement.classList.add('inactive')
-                tabElement.getElementsByClassName('file-tab-close')[0].style.visibility = 'hidden'
-            })
-            this.currentTab.classList.remove('inactive')
-            this.currentTab.classList.add('active')
-            this.currentTab.getElementsByClassName('file-tab-close')[0].style.visibility = 'visible'
-            this._openInViewer(this.files[this.tabs.indexOf(this.currentTab)])
+            this._tabs.forEach(tabElement => {
+                tabElement.classList.remove('active');
+                tabElement.classList.add('inactive');
+                tabElement.getElementsByClassName('file-tab-close')[0]
+                    .style.visibility = 'hidden';
+            });
+            this._currentTab.classList.remove('inactive');
+            this._currentTab.classList.add('active');
+            this._currentTab.getElementsByClassName('file-tab-close')[0]
+                .style.visibility = 'visible';
+            this._openInViewer(
+                this._paths[this._tabs.indexOf(this._currentTab)]);
         }
 
         /**
          * @desc Switches to tabElement
-         * @param {*} tabElement 
+         * @param {*} tabElement
          */
         _switchTab(tabElement) {
-            if (this.currentTab !== tabElement) {
-                this.currentTab = tabElement
-                this._updateTitle(this.files[this.tabs.indexOf(tabElement)])
-                this._adjustTabs()
-                this._focusCurrentTab()
+            if (this._currentTab !== tabElement) {
+                this._currentTab = tabElement;
+                this._updateTitle(this._paths[this._tabs.indexOf(tabElement)]);
+                this._adjustTabs();
+                this._focusCurrentTab();
             }
         }
 
         /**
          * @desc Toggles tab container visibililty
-         * @param {*} visible 
+         * @param {*} visible
          */
         _toggleTabContainer(visible) {
-            const visibility = visible ? 'visible' : 'hidden'
-            this.tabContainer.style.visibility = visibility
-            this.leftSeekElement.style.visibility = visibility
-            this.rightSeekElement.style.visibility = visibility
+            const visibility = visible ? 'visible' : 'hidden';
+            this._tabContainer.style.visibility = visibility;
+            this._leftSeekElement.style.visibility = visibility;
+            this._rightSeekElement.style.visibility = visibility;
         }
 
         /**
          * @desc Sends enable/disable flag for toggle-menu-items
-         * @param {*} flag 
+         * @param {*} flag
          */
         _toggleMenuItems(flag) {
-            ipcRenderer.send('toggle-menu-items', flag)
+            ipcRenderer.send('toggle-menu-items', flag);
         }
 
         /**
          * @desc Adds a new tab
-         * @param {*} pathname 
+         * @param {*} pathName
          */
-        _addTab(pathname) {
-            // Enable visibility of tabContainer, etc. when the first tab is added
-            if (this.tabs.length === 0) {
-                this._toggleTabContainer(true)
-                this._toggleMenuItems(true)
-                this._toggleBackgroundInfo(false)
+        _addTab(pathName) {
+            // Enable visibility of tabContainer, etc. when the
+            // first tab is added
+            if (this._tabs.length === 0) {
+                this._toggleTabContainer(true);
+                this._toggleMenuItems(true);
+                this._toggleBackgroundInfo(false);
             }
 
             // Switch to tab if already open
-            if (this.files.indexOf(pathname) >= 0) {
-                this._switchTab(this.tabs[this.files.indexOf(pathname)])
-                return
+            if (this._paths.indexOf(pathName) >= 0) {
+                this._switchTab(this._tabs[this._paths.indexOf(pathName)]);
+                return;
             }
 
-            const tabElement = this._createTabElement(pathname)
+            const tabElement = this._createTabElement(pathName);
 
-            this.currentTab = tabElement
-            this.tabs.push(tabElement)
-            this.files.push(pathname)
-            this.tabContainer.append(tabElement)
-            this._adjustTabs()
-            this._focusCurrentTab()
+            this._currentTab = tabElement;
+            this._tabs.push(tabElement);
+            this._paths.push(pathName);
+            this._tabContainer.append(tabElement);
+            this._adjustTabs();
+            this._focusCurrentTab();
         }
 
         /**
          * @desc Updates title
-         * @param {*} pathname 
+         * @param {*} pathName
          */
-        _updateTitle(pathname) {
-            if (pathname)
-                this.titleBar.updateTitle(pathname.substring(pathname.lastIndexOf('\\') + 1) + " - Lector")
-            else
-                this.titleBar.updateTitle("Lector")
+        _updateTitle(pathName) {
+            if (pathName) {
+                this._titleBar.updateTitle(pathName.substring(
+                    pathName.lastIndexOf('\\') + 1) + " - Lector");
+            } else {
+                this._titleBar.updateTitle("Lector");
+            }
         }
 
         /**
          * @desc Opens a file
-         * @param {*} pathname 
+         * @param {*} pathName
          */
-        _openFile(pathname) {
-            this._updateTitle(pathname)
-            this._addTab(pathname)
+        _openFile(pathName) {
+            this._updateTitle(pathName);
+            this._addTab(pathName);
         }
 
         /**
@@ -336,55 +359,67 @@
          */
         _setMenuItemEvents() {
             ipcRenderer.on('file-open', (event, args) => {
-                this._propagateClick()
-                this._openFile(args)
-            })
+                this._propagateClick();
+                this._openFile(args);
+            });
 
             ipcRenderer.on('file-print', (event, args) => {
-                this._propagateClick()
-                if (this.viewerElement.src)
-                    this.viewerElement.contentDocument.getElementById('print').dispatchEvent(new Event('click'))
-            })
+                this._propagateClick();
+                if (this._viewerElement.src) {
+                    this._viewerElement.contentDocument
+                        .getElementById('print').dispatchEvent(
+                            new Event('click'));
+                }
+            });
 
             ipcRenderer.on('file-properties', (event, args) => {
-                this._propagateClick()
-                if (this.viewerElement.src)
-                    this.viewerElement.contentDocument.getElementById('documentProperties').dispatchEvent(new Event('click'))
-            })
+                this._propagateClick();
+                if (this._viewerElement.src) {
+                    this._viewerElement.contentDocument
+                        .getElementById('documentProperties')
+                        .dispatchEvent(new Event('click'));
+                }
+            });
 
             ipcRenderer.on('file-close', (event, args) => {
-                this._propagateClick()
-                if (this.currentTab)
-                    this.currentTab.getElementsByClassName('file-tab-close')[0].dispatchEvent(new Event('click'))
-            })
+                this._propagateClick();
+                if (this._currentTab) {
+                    this._currentTab.getElementsByClassName('file-tab-close')[0]
+                        .dispatchEvent(new Event('click'));
+                }
+            });
 
             ipcRenderer.on('view-fullscreen', (event, args) => {
-                this._propagateClick()
-                if (this.viewerElement.src)
-                    this.viewerElement.contentDocument.getElementById('presentationMode').dispatchEvent(new Event('click'))
-            })
+                this._propagateClick();
+                if (this._viewerElement.src) {
+                    this._viewerElement.contentDocument
+                        .getElementById('presentationMode')
+                        .dispatchEvent(new Event('click'));
+                }
+            });
         }
 
         /**
          * @desc Sets seek element events
          */
         _setSeekEvents() {
-            let that = this
-            this.leftSeekElement.addEventListener('click', event => {
-                if (that.currentBucket > 0) {
-                    that.currentBucket--
-                    that._appendTabsToContainer(that.currentBucket)
-                    that._toggleSeek()
+            let that = this;
+            this._leftSeekElement.addEventListener('click', event => {
+                if (that._currentBucket > 0) {
+                    that._currentBucket--;
+                    that._appendTabsToContainer(that._currentBucket);
+                    that._toggleSeek();
                 }
-            })
+            });
 
-            this.rightSeekElement.addEventListener('click', event => {
-                if (that.currentBucket < that.buckets - 1) {
-                    that.currentBucket++
-                    that._appendTabsToContainer(that.currentBucket)
-                    that._toggleSeek()
-                }
-            })
+            this._rightSeekElement.addEventListener('click',
+                event => {
+                    if (that._currentBucket < that._buckets - 1) {
+                        that._currentBucket++;
+                        that._appendTabsToContainer(that._currentBucket);
+                        that._toggleSeek();
+                    }
+                });
 
         }
 
@@ -392,28 +427,59 @@
          * @desc Sets window events
          */
         _setWindowEvents() {
-            let that = this
+            let that = this;
             // Adjust tabs on resize
             window.addEventListener('resize', event => {
-                that._computeStepTabs()
-                if (that.tabs.length > 0)
-                    that._adjustTabs()
-            })
+                that._computeStepTabs();
+                if (that._tabs.length > 0) {
+                    that._adjustTabs();
+                }
+            });
+        }
+
+        /**
+         * @desc Extracts path name from the arguments and opens the file.
+         * @param {*} args 
+         */
+        _processArguments(args) {
+            const argsLength = args.length;
+            if (argsLength > 1 && args[argsLength - 1].endsWith(".pdf")) {
+                this._openFile(args[argsLength - 1]);
+            }
+        }
+
+        /**
+         * @desc Sets external application events
+         */
+        _setExternalEvents() {
+            let that = this;
+            ipcRenderer.on('external-file-open', (event, args) => {
+                that._processArguments(args);
+            });
+        }
+
+        /**
+         * @desc Process initial arguments to the application
+         */
+        _processRemoteArguments() {
+            this._processArguments(remote.process.argv);
         }
 
         /**
          * @desc Runs the application
          */
         run() {
-            this._setMenuItemEvents()
-            this._setSeekEvents()
-            this._setViewerEvents()
-            this._setWindowEvents()
+            this._setMenuItemEvents();
+            this._setSeekEvents();
+            this._setViewerEvents();
+            this._setWindowEvents();
+            this._setExternalEvents();
+            this._processRemoteArguments();
         }
 
     }
 
-    const application = new Reader()
-    application.run()
+    const application = new Reader();
+    application.run();
 
-})()
+})();

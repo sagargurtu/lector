@@ -1,10 +1,11 @@
 "use strict";
-/*-------------------------------------------------------------------------------------------
+/*------------------------------------------------------------------------------
  *  Copyright (c) 2019 Sagar Gurtu
- *  Licensed under the MIT License. See License in the project root for license information.
- *------------------------------------------------------------------------------------------*/
+ *  Licensed under the MIT License.
+ *  See License in the project root for license information.
+ *----------------------------------------------------------------------------*/
 
-const { app, dialog } = require('electron')
+const { app, dialog } = require('electron');
 
 exports.buildMenuTemplate = function (win) {
     return [
@@ -21,12 +22,12 @@ exports.buildMenuTemplate = function (win) {
                             filters: [
                                 { name: 'PDF Files', extensions: ['pdf'] }
                             ]
-                        },
-                            (filename) => {
-                                if (filename) {
-                                    win.webContents.send('file-open', filename.toString())
-                                }
-                            })
+                        }, (filename) => {
+                            if (filename) {
+                                win.webContents.send('file-open',
+                                    filename.toString())
+                            }
+                        })
                     }
                 },
                 {
@@ -92,5 +93,5 @@ exports.buildMenuTemplate = function (win) {
             ]
         }
 
-    ]
-}
+    ];
+};
