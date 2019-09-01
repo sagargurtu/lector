@@ -9,6 +9,7 @@
 
     const { ipcRenderer, remote } = require('electron');
     const customTitlebar = require('custom-electron-titlebar');
+    const path = require("path");
 
     /**
      * @desc Main view class containing all rendering and
@@ -136,7 +137,7 @@
          * @param {*} pathName
          */
         _createTabElement(pathName) {
-            const filename = pathName.substring(pathName.lastIndexOf('\\') + 1);
+            const filename = path.basename(pathName);
             const tabElement = document.createElement('div');
             const labelElement = document.createElement('div');
             const closeElement = document.createElement('div');
