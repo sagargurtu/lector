@@ -316,8 +316,9 @@
             }
 
             // Switch to tab if already open
-            if (this._paths.indexOf(pathName) >= 0) {
-                this._switchTab(this._tabs[this._paths.indexOf(pathName)]);
+            let itab = this._paths.indexOf(pathName);
+            if (itab >= 0) {
+                this._switchTab(this._tabs[itab]);
                 return;
             }
 
