@@ -22,13 +22,20 @@
     "devDependencies": {
         "custom-electron-titlebar": "^3.0.9",
         "electron": "^5.0.4",
-        "electron-builder": "^21.1.1"
+        "electron-builder": "^21.2.0"
     },
     "build": {
         "appId": "lector",
         "productName": "Lector",
         "copyright": "Copyright (c) 2019 Sagar Gurtu",
         "buildVersion": "1.1.0",
+        "mac": {
+            "icon": "./src/assets/icons/mac/icon.icns",
+            "fileAssociations": {
+                "ext": "pdf",
+                "icon": "./src/assets/icons/mac/icon.icns"
+            }
+        },
         "win": {
             "target": "NSIS",
             "icon": "./src/assets/icons/win/icon.ico",

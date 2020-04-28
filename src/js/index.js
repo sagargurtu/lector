@@ -475,6 +475,9 @@
             this._setWindowEvents();
             this._setExternalEvents();
             this._processRemoteArguments();
+
+            // On MacOs, notify the main process that this has finished loading
+            if (process.platform === 'darwin') ipcRenderer.send("web-loaded");
         }
 
     }
