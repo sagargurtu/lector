@@ -5,7 +5,7 @@
  *  See License in the project root for license information.
  *----------------------------------------------------------------------------*/
 
-(function () {
+(function() {
 
     const { ipcRenderer, remote } = require('electron');
     const customTitlebar = require('custom-electron-titlebar');
@@ -63,10 +63,8 @@
          */
         _appendTabsToContainer(bucketPosition) {
             this._tabContainer.innerHTML = "";
-            for (let i = bucketPosition * this.stepTabs;
-                i < this._tabs.length &&
-                i < (bucketPosition + 1) * this.stepTabs;
-                i++) {
+            for (let i = bucketPosition * this.stepTabs; i < this._tabs.length &&
+                i < (bucketPosition + 1) * this.stepTabs; i++) {
                 this._tabContainer.append(this._tabs[i]);
             }
         }
@@ -198,10 +196,14 @@
                 } else { // If no tabs remaining
                     that._toggleTabContainer(false);
                     that._updateTitle();
+
+                    // Add the drop listener after a timeout, otherwise, it won't work
+                    setTimeout(() => {
+                        that._addDropListener();
+                    }, 1000);
                 }
                 that._toggleSeek();
                 event.stopPropagation();
-
             });
 
             tabElement.addEventListener('mouseover', event => {
@@ -466,6 +468,39 @@
         }
 
         /**
+         * @desc Add an event listener to the viewer, so files can be dropped and opened
+         * Derived from: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop
+         */
+        _addDropListener() {
+            // Get the document from the viewer iframe
+            document.getElementById('viewer').contentWindow.document.body.ondragover = ev => {
+                // Prevent default behavior (Prevent file from being opened)
+                ev.preventDefault();
+            }
+
+            document.getElementById('viewer').contentWindow.document.body.ondrop = ev => {
+                // Prevent default behavior (Prevent file from being opened)
+                ev.preventDefault();
+
+                if (ev.dataTransfer.items) {
+                    // Use DataTransferItemList interface to access the file(s)
+                    for (var i = 0; i < ev.dataTransfer.items.length; i++) {
+                        // If dropped items aren't files, reject them
+                        if (ev.dataTransfer.items[i].kind === 'file') {
+                            var file = ev.dataTransfer.items[i].getAsFile();
+                            this._openFile(file.path);
+                        }
+                    }
+                } else {
+                    // Use DataTransfer interface to access the file(s)
+                    for (var i = 0; i < ev.dataTransfer.files.length; i++) {
+                        this._openFile(ev.dataTransfer.files[i].path);
+                    }
+                }
+            }
+        }
+
+        /**
          * @desc Runs the application
          */
         run() {
@@ -475,6 +510,7 @@
             this._setWindowEvents();
             this._setExternalEvents();
             this._processRemoteArguments();
+            this._addDropListener();
 
             // On MacOs, notify the main process that this has finished loading
             if (process.platform === 'darwin') ipcRenderer.send("web-loaded");
