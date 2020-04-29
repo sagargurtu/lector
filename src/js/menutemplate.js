@@ -63,6 +63,7 @@ exports.buildMenuTemplate = function (win) {
                 },
                 {
                     label: 'Exit',
+                    accelerator: ((process.platform === 'darwin')? 'CmdOrCtrl+Q' : ''), // listen on MacOs for Command+Q to exit
                     click() {
                         app.quit()
                     }

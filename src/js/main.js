@@ -12,6 +12,11 @@ const { buildMenuTemplate } = require('./menutemplate');
 // be closed automatically when the JavaScript object is garbage collected.
 let win, aboutWin;
 
+// An array for all file paths to open on program start
+const files = [];
+// If the web site has finished loading
+let web_loaded = false;
+
 function createWindow() {
     // Create the browser window.
     win = new BrowserWindow({
@@ -24,6 +29,8 @@ function createWindow() {
             plugins: true,
             nodeIntegration: true
         },
+        // Set titleBarStyle on mac to 'hidden', according to: https://www.electronjs.org/docs/api/frameless-window#alternatives-on-macos
+        titleBarStyle: ((process.platform === 'darwin') ? 'hidden' : 'visible'),
         frame: false
     });
 
@@ -69,6 +76,20 @@ function createWindow() {
     // Set application menu
     Menu.setApplicationMenu(menu);
 
+    // On MacOs listen for the web site to finish loading, to send all file paths to open to it
+    // Since parsing program args does not work
+    // General idea: https://medium.com/@roysegall/electron-open-with-for-mac-osx-f215a1fe2ce1
+    if (process.platform === 'darwin') {
+        ipcMain.on('web-loaded', () => {
+            web_loaded = true;
+            files.forEach(path => {
+                win.webContents.send('file-open', path);
+            });
+            // Empty the files list to prevent it from beeing sent again
+            files.length = 0;
+        });
+    }
+
     // Add event listener for enabling/disabling menu items
     ipcMain.on('toggle-menu-items', (event, flag) => {
         menu.getMenuItemById('file-print').enabled = flag;
@@ -95,6 +116,19 @@ if (!gotTheLock) {
             win.webContents.send('external-file-open', commandLine);
         }
     });
+
+    // On MacOs, push all files to an array to open when the web site is loaded
+    if (process.platform === 'darwin') {
+        app.on('open-file', (event, path) => {
+            // If the web site is already loaded, do not push to the array
+            // Triggers, when the application is already running and a file is opened by the user
+            if (web_loaded) {
+                win.webContents.send('file-open', path);
+            } else {
+                files.push(path);
+            }
+        });
+    }
 
     // This method will be called when Electron has finished
     // initialization and is ready to create browser windows.
