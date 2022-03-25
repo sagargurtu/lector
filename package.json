@@ -21,7 +21,7 @@
     },
     "devDependencies": {
         "custom-electron-titlebar": "^3.0.9",
-        "electron": "^5.0.4",
+        "electron": "^13.6.6",
         "electron-builder": "^21.1.1"
     },
     "build": {
